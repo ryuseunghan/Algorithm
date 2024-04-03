@@ -1,43 +1,43 @@
 from collections import deque
 
 n, l, r = map(int, input().split())
-graph = [list(map(int, input().split())) for _ in range(n)]
-
-def bfs(x, y):
-    q = deque()
-    q.append((x, y))
-    temp = []  # 현재 연합을 저장할 리스트
-    temp.append((x, y))
-    while q:
-        x, y = q.popleft()
-        for i in range(4):
-            nx, ny = x + dx[i], y + dy[i]
-            if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny]:
-                if l <= abs(graph[x][y] - graph[nx][ny]) <= r:
-                    visited[nx][ny] = True
-                    q.append((nx, ny))
-                    temp.append((nx, ny))
-    return temp
+graph = []
+for i in range(n):
+    graph.append(list(map(int, input().split())))
 
 dx = [1, -1, 0, 0]
 dy = [0, 0, 1, -1]
 
+flag = True
 count = 0
 while True:
-    visited = [[False] * n for _ in range(n)]
-    is_moved = False
-    for i in range(n):
-        for j in range(n):
-            if not visited[i][j]:
-                visited[i][j] = True
-                union = bfs(i, j)
-                if len(union) > 1:
-                    is_moved = True
-                    num = sum(graph[x][y] for x, y in union) // len(union)
-                    for x, y in union:
-                        graph[x][y] = num
-    if not is_moved:
+    visited = [[False for i in range(n)] for j in range(n)]
+    flag = False
+    for seq in [(x,y) for x in range(n) for y in range(n) if not visited[x][y]]:
+        queue = deque([seq])
+        union = []
+        while (queue):
+            point = queue.popleft()
+            if not visited[point[0]][point[1]]:
+                visited[point[0]][point[1]] = True
+                union.append((point[0], point[1]))
+                for i in range(4):
+                    nx, ny = point[0], point[1]
+                    if (0<= nx+dx[i] < n and  0 <= ny+dy[i] < n):
+                        if l <= abs(graph[nx][ny] - graph[nx+dx[i]][ny+dy[i]]) <=r and not visited[nx+dx[i]][ny+dy[i]]:
+                            nx += dx[i]
+                            ny += dy[i]
+                            queue.append((nx, ny))
+        countriesSum = 0
+        if len(union) > 1:
+            flag = True
+        # 연합 인구 이동
+        for country in union:
+            countriesSum += graph[country[0]][country[1]]
+        for country in union:
+            graph[country[0]][country[1]] = int(countriesSum/len(union))
+    if flag:
+        count += 1
+    else:
         break
-    count += 1
-
 print(count)
