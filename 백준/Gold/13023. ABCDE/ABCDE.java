@@ -1,54 +1,44 @@
-import org.w3c.dom.Node;
-
 import java.io.*;
-import java.util.*;
-
-import static java.lang.Math.sqrt;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Main {
+    static boolean[] visited;
+    static int flag;
     static ArrayList<Integer>[] graph;
-    static boolean visited[];
-    static boolean flag;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
-
-        graph = new ArrayList[N];
-        visited = new boolean[N];
-
-        for(int i = 0; i<N; i++){
-            graph[i] = new ArrayList<Integer>();
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        graph = new ArrayList[n];
+        for(int i = 0; i < n; i++){
+            graph[i] = new ArrayList<>();
         }
-        for(int i = 0; i<M; i++){
+        for(int i = 0; i< m; i++){
             st = new StringTokenizer(br.readLine());
             int s = Integer.parseInt(st.nextToken());
             int e = Integer.parseInt(st.nextToken());
             graph[s].add(e);
             graph[e].add(s);
         }
-        flag = false;
-
-        for(int i = 0; i<N; i++){
-            Arrays.fill(visited, false);
-            DFS(i, 1);
-            if(flag) break;
+        for(int i = 0; i < n; i++){
+            visited = new boolean[n];
+            DFS(i, 0);
         }
-        System.out.println(flag ? 1 : 0);
+        System.out.println(flag);
+
     }
-    static void DFS(int n, int count){
-        visited[n] = true;
-        if(count == 5){
-            flag = true;
+    static void DFS(int cur, int count){
+        if(visited[cur]) return;
+        visited[cur] = true;
+        if(count ==4) {
+            flag =1;
             return;
         }
-        for(int j : graph[n]){
-            if(!visited[j]){ // vistied x
-                DFS(j, count + 1);
-                if (flag) return;
-            }
+        for(int i: graph[cur]){
+            DFS(i, count + 1);
         }
-        visited[n] = false; // 백트래킹
+        visited[cur] = false;
     }
 }
