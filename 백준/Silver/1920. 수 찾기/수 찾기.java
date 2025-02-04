@@ -3,43 +3,49 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int[] array1;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
-        array1 = new int[n];
+        int[] array = new int[n];
         st = new StringTokenizer(br.readLine());
-        for(int i = 0; i < n;i++){
-            array1[i] = Integer.parseInt(st.nextToken());
+        for(int i = 0; i<n; i++){
+            array[i] = Integer.parseInt(st.nextToken());
         }
-        Arrays.sort(array1);
+        Arrays.sort(array);
         st = new StringTokenizer(br.readLine());
         int m = Integer.parseInt(st.nextToken());
+        int[] found = new int[m];
         st = new StringTokenizer(br.readLine());
-        for(int i = 0; i < m;i++){
-            bw.write(find(Integer.parseInt(st.nextToken()))+"\n");
+        for(int i = 0; i<m; i++){
+            found[i] = Integer.parseInt(st.nextToken());
+        }
+
+        for(int i : found){
+            int start = 0;
+            int end = n-1;
+            boolean flag = true;
+            while(start <= end){
+                int mid = (start + end) / 2;
+                if(array[mid] == i){
+                    bw.write(1+"\n");
+                    flag = false;
+                    break;
+                }
+                else if (array[mid] > i){
+                    end = mid -1;
+                }
+                else{
+                    start = mid + 1;
+                }
+            }
+            if(flag){
+                bw.write(0+"\n");
+            }
         }
         bw.flush();
     }
-    static int find(int num){
-        int min = 0;
-        int max = array1.length-1;
-        while (min <= max) {
-            int mid = (min + max) / 2;
-
-            if (array1[mid] == num) {
-                return 1; // 숫자를 찾음
-            } else if (array1[mid] > num) {
-                max = mid - 1; // 왼쪽으로 탐색
-            } else {
-                min = mid + 1; // 오른쪽으로 탐색
-            }
-        }
-        return 0;         
-    }
 
 }
-
-
