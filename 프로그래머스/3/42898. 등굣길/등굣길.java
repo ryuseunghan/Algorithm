@@ -1,24 +1,20 @@
-import java.util.*;
 class Solution {
-    long[][] array;
-    boolean[][] ps;
+    static long[][] dp;
     public int solution(int m, int n, int[][] puddles) {
-        array = new long[m+1][n+1];
-        ps = new boolean[m+1][n+1];
-        for(int[] puddle : puddles){
-            ps[puddle[0]][puddle[1]] = true;
-        }
-        array[1][1] = 1;
-        ps[1][1] = true;
-        for(int i =1; i<= m; i++){
-            for(int j = 1; j<= n; j++){
-                if(!ps[i][j]){
-                    array[i][j] = array[i-1][j]% 1000000007l + array[i][j-1]% 1000000007l;
-                }
+        dp = new long[m+1][n+1];
+        dp[1][1] = 1l;
+        for(int i = 1; i <= m; i++){
+            for (int j = 1; j <= n; j++){
+                if(isNotPuddle(i,j, puddles)) dp[i][j] = (dp[i-1][j]  % 1000000007 + dp[i][j-1]  % 1000000007) % 1000000007; 
             }
         }
-
-        return (int)(array[m][n] % 1000000007l);
-
+        return (int) (dp[m][n]);
+    }
+    static boolean isNotPuddle(int i, int j, int[][] puddles){
+        if(i == 1 && j == 1) return false;
+        for(int[] puddle : puddles){
+            if(puddle[0] == i && puddle[1] == j) return false;
+        }
+        return true;
     }
 }
