@@ -1,53 +1,40 @@
 import java.util.*;
-
 class Solution {
-    static int[] parent;
-
+    static List<Integer>[] graph;
+    static boolean[] visited;
     public int solution(int n, int[][] computers) {
-        parent = new int[n];
-        for (int i = 0; i < n; i++) {
-            parent[i] = i; // 각 컴퓨터는 자신을 부모로 설정
+        graph = new ArrayList[n];
+        visited = new boolean[n];
+        for(int i=0; i < n; i++){
+            graph[i] = new ArrayList<>();
         }
-
-        // Union-Find를 사용하여 연결된 컴퓨터들을 그룹화
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = i + 1; j < n; j++) {  // j는 i보다 더 큰 값에서 시작
-                if (computers[i][j] == 1) {
-                    union(i, j);  // 연결된 컴퓨터들끼리 union 수행
+        for(int i=0; i < n; i++){
+            for(int j=i+1; j < n; j++){
+                if(computers[i][j] == 1){
+                    graph[i].add(j);
+                    graph[j].add(i);
                 }
             }
         }
-
-        // 각 네트워크(연결된 그룹)의 개수를 구하기 위해 부모가 서로 다른 노드를 Set에 저장
-        Set<Integer> set = new HashSet<>();
-        for (int i = 0; i < n; i++) {
-            set.add(find(i));  // 각 컴퓨터의 루트 부모를 찾아서 집합에 추가
-        }
-
-        // 서로 다른 루트 부모의 개수가 네트워크의 개수
-        return set.size();
-    }
-
-    // union 연산: 두 컴퓨터를 연결
-    static void union(int i, int j) {
-        int rootI = find(i);
-        int rootJ = find(j);
-
-        // 부모가 다르면 더 작은 번호를 부모로 설정
-        if (rootI != rootJ) {
-            if (rootI < rootJ) {
-                parent[rootJ] = rootI;
-            } else {
-                parent[rootI] = rootJ;
+        Queue<Integer> queue = new LinkedList<>();
+        
+        int ans = 0;
+        for(int i = 0; i < n; i++){
+            if(visited[i])continue;
+            visited[i] = true;
+            queue.offer(i);
+            ans++;
+            while(!queue.isEmpty()){
+                int num = queue.poll();
+                for(int elem : graph[num]){
+                    if(!visited[elem]){
+                        visited[elem] = true;
+                        queue.offer(elem);
+                    }
+                }
             }
         }
-    }
-
-    // find 연산: 부모를 찾고 경로 압축
-    static int find(int i) {
-        if (parent[i] != i) {
-            parent[i] = find(parent[i]);  // 경로 압축
-        }
-        return parent[i];
+        
+        return ans;
     }
 }
