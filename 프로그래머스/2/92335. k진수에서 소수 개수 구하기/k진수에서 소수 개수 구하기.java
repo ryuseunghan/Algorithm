@@ -1,43 +1,33 @@
 import java.util.*;
 class Solution {
     public int solution(int n, int k) {
-        int answer = 0;
-        // n을 k 진수로
-        int[] arr = ntok(n, k);
-        long num = 0;
-        // 소수 개수 구하기
-        for(int i = 0; i < arr.length; i++){
-            if(arr[i] != 0){
-                num = num * 10 + (long)arr[i];
-            }else{
-                if(num > 1){
-                    answer += checkIfPrime(num);
-                }
-                num = 0;
-            }
+        int result = 0;
+        String[] arr = ntok(n, k).split("0");
+        for(String str : arr){
+           result +=  checkIfPrime(str);
         }
-        if(num > 1) answer += checkIfPrime(num);
-        
-        
-        return answer;
+        return result;
     }
-    static int checkIfPrime(long num){
-        for(long i = 2; i <= Math.sqrt(num) ; i++){
-            if(num % i == 0) return 0; 
+    static int checkIfPrime(String str){
+        if(str.equals("") || str.equals("1")) return 0;
+        long num = Long.parseLong(str);
+        for(int i = 2; i <= Math.sqrt(num); i++){
+            if(num % i == 0) return 0;
         }
         return 1;
     }
-    static int[] ntok(int n, int k){
+    static String ntok(int n, int k){
         Queue<Integer> queue = new LinkedList<>();
         while(n > 0){
             queue.offer(n%k);
             n /= k;
         }
-        int[] arr = new int[queue.size()];
-        int i = queue.size() - 1;
+        long num = 0;
+        long jarisu = 1;
         while(!queue.isEmpty()){
-            arr[i--] = queue.poll();
+            num += queue.poll() * jarisu;
+            jarisu *=10;
         }
-        return arr;
+        return Long.toString(num);
     }
 }
